@@ -22,13 +22,8 @@ return {
 				rust = { "rustfmt" },
 				java = { "google-java-format" },
 				php = { "php-cs-fixer" },
-        xml = { "xmlformat" }
+				xml = { "xmlformat" },
 			},
-			-- format_on_save = {
-			-- 	lsp_fallback = true,
-			-- 	async = false,
-			-- 	timeout_ms = 1000,
-			-- },
 		})
 
 		conform.formatters["black"] = {
