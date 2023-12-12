@@ -1,7 +1,6 @@
 -- for more see :help options
 local options = {
 	backup = false, -- creates a backup file
-	-- clipboard = "unnamedplus", -- allows neovim to access the system clipboard
 	-- cmdheight = 0, -- more space in the neovim command line for displaying messages
 	conceallevel = 0, -- so that `` is visible in markdown files
 	fileencoding = "utf-8", -- the encoding written to a file
@@ -12,7 +11,7 @@ local options = {
 	mouse = "a", -- allow the mouse to be used in neovim
 	-- pumheight = 10,                          -- pop up menu height
 	showmode = false, -- we don't need to see things like -- INSERT -- anymore
-	showtabline = 0, -- always show tabs
+	showtabline = 1, -- always show tabs
 	smartcase = true, -- smart case
 	smartindent = true, -- make indenting smarter again
 	splitbelow = true, -- force all horizontal splits to go below current window
@@ -42,4 +41,3 @@ for k, v in pairs(options) do
 	vim.opt[k] = v
 end
 
-vim.cmd([[hi FoldColumn guibg=black ]])
