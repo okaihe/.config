@@ -47,7 +47,7 @@ return {
     -- TelescopeResultsBorder
 
     local color1 = "#141718"
-    local color2 = "#1f2122"
+    local color2 = "#191b1c"
     local color3 = "#8bba7e"
 
     -- Prompt
