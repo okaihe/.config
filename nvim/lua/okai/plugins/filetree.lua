@@ -17,7 +17,12 @@ return {
 			},
       renderer = {
         group_empty = true,
-      }
+      },
+      update_focused_file = {
+        enable = true,
+        update_root = false,
+        ignore_list = {},
+      },
 		})
 	end,
 }
