@@ -34,6 +34,8 @@ return {
 					"vim",
 					"dockerfile",
 					"gitignore",
+					"angular",
+					"php",
 				},
 				context_commentstring = {
 					enable = true,

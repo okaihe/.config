@@ -51,40 +51,59 @@ return {
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 		end
 
-		-- configure html server
 		lspconfig["html"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
 		})
 
-		-- configure typescript server with plugin
+		lspconfig["dockerls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		-- lspconfig["docker_compose_language_service"].setup({
+		-- 	capabilities = capabilities,
+		-- 	on_attach = on_attach,
+		--     filetypes = { "yaml", "yml" }
+		-- })
+
 		lspconfig["tsserver"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
 		})
 
-		-- configure css server
 		lspconfig["cssls"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
 		})
 
-		-- configure emmet language server
 		lspconfig["emmet_ls"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
 			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
 		})
 
-		-- configure python server
 		lspconfig["pyright"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
 		})
 
+		local languageServerPath = "/opt/homebrew/lib/node_modules/@angular/language-server/"
+		local cmd = {
+			"ngserver",
+			"--stdio",
+			"--tsProbeLocations",
+			languageServerPath,
+			"--ngProbeLocations",
+			languageServerPath,
+		}
 		lspconfig["angularls"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
+			cmd = cmd,
+			on_new_config = function(new_config, new_root_dir)
+				new_config.cmd = cmd
+			end,
 		})
 
 		lspconfig["phpactor"].setup({
@@ -95,7 +114,7 @@ return {
 		lspconfig["jdtls"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
-      root_dir = lspconfig.util.root_pattern("pom.xml", "build.gradle", ".git") or vim.fn.getcwd()
+			root_dir = lspconfig.util.root_pattern("pom.xml", "build.gradle", ".git") or vim.fn.getcwd(),
 		})
 
 		lspconfig["rust_analyzer"].setup({

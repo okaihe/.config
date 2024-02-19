@@ -21,7 +21,7 @@ return {
 				python = { "isort", "black" },
 				rust = { "rustfmt" },
 				java = { "google-java-format" },
-				php = { "php-cs-fixer" },
+				php = { "php" },
 				xml = { "xmlformat" },
 			},
 		})
@@ -33,6 +33,15 @@ return {
 		conform.formatters["google-java-format"] = {
 			prepend_args = { "--aosp" },
 		}
+
+        conform.formatters["php"] = {
+            command = "php-cs-fixer",
+            args = {
+                "fix",
+                "$FILENAME",
+            },
+            stdin = false;
+        }
 
 		vim.keymap.set({ "n", "v" }, "<leader>dp", function()
 			conform.format({
