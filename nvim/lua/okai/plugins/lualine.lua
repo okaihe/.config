@@ -4,7 +4,7 @@ return {
         require("lualine").setup({
             options = {
                 icons_enabled = true,
-                theme = "auto",
+                theme = "okai",
 
                 component_separators = { left = "", right = "" },
                 section_separators = { left = "", right = "" },
@@ -26,6 +26,7 @@ return {
                 lualine_a = { "mode" },
                 lualine_b = { "branch" },
                 lualine_c = { "diagnostics" },
+
                 lualine_x = { "filename" },
                 lualine_y = { "filetype" },
                 lualine_z = { "progress" },

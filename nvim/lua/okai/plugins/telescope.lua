@@ -46,30 +46,30 @@ return {
     -- TelescopeResultsTitle
     -- TelescopeResultsBorder
 
-    local color1 = "#141718"
-    local color2 = "#191b1c"
-    local color3 = "#8bba7e"
+    -- local color1 = "#141718"
+    -- local color2 = "#191b1c"
+    -- local color3 = "#8bba7e"
 
-    -- Prompt
-		vim.api.nvim_command("highlight TelescopePromptBorder guifg=" .. color1)
-		vim.api.nvim_command("highlight TelescopePromptBorder guibg=" .. color1)
-		vim.api.nvim_command("highlight TelescopePromptNormal guibg=" .. color1)
-
-    -- Selection
-		vim.api.nvim_command("highlight TelescopeSelection guibg=" .. color1)
-
-    -- Results
-		vim.api.nvim_command("highlight TelescopeResultsBorder guifg=" .. color2)
-		vim.api.nvim_command("highlight TelescopeResultsBorder guibg=" .. color2)
-		vim.api.nvim_command("highlight TelescopeNormal guibg=" .. color2)
-
-    -- Preview
-		vim.api.nvim_command("highlight TelescopePreviewBorder guifg=" .. color2)
-		vim.api.nvim_command("highlight TelescopePreviewBorder guibg=" .. color2)
-
-    -- Titles
-		vim.api.nvim_command("highlight TelescopeResultsTitle guibg=" .. color3)
-		vim.api.nvim_command("highlight TelescopePromptTitle guibg=" .. color3)
-		vim.api.nvim_command("highlight TelescopePreviewTitle guibg=" .. color3)
+  --   -- Prompt
+		-- vim.api.nvim_command("highlight TelescopePromptBorder guifg=" .. color1)
+		-- vim.api.nvim_command("highlight TelescopePromptBorder guibg=" .. color1)
+		-- vim.api.nvim_command("highlight TelescopePromptNormal guibg=" .. color1)
+		--
+  --   -- Selection
+		-- vim.api.nvim_command("highlight TelescopeSelection guibg=" .. color1)
+		--
+  --   -- Results
+		-- vim.api.nvim_command("highlight TelescopeResultsBorder guifg=" .. color2)
+		-- vim.api.nvim_command("highlight TelescopeResultsBorder guibg=" .. color2)
+		-- vim.api.nvim_command("highlight TelescopeNormal guibg=" .. color2)
+		--
+  --   -- Preview
+		-- vim.api.nvim_command("highlight TelescopePreviewBorder guifg=" .. color2)
+		-- vim.api.nvim_command("highlight TelescopePreviewBorder guibg=" .. color2)
+		--
+  --   -- Titles
+		-- vim.api.nvim_command("highlight TelescopeResultsTitle guibg=" .. color3)
+		-- vim.api.nvim_command("highlight TelescopePromptTitle guibg=" .. color3)
+		-- vim.api.nvim_command("highlight TelescopePreviewTitle guibg=" .. color3)
 	end,
 }
