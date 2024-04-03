@@ -11,6 +11,7 @@ return {
 			treesitter.setup({
 				highlight = {
 					enable = true,
+                    disable = { "tex", "latex" },
 				},
 				indent = { enable = true },
 				autotag = {

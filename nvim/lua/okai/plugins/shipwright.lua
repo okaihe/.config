@@ -1,3 +1,3 @@
 return {
-	"rktjmp/shipwright.nvim",
+    "rktjmp/shipwright.nvim",
 }

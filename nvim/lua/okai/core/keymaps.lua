@@ -61,12 +61,12 @@ keymap("n", "<esc>", ":noh<return><esc>", opts)
 
 --
 local function runcmd()
-	vim.cmd("silent! wa!")
-	local cmdinput = vim.o.makeprg
-	cmdinput = cmdinput:gsub(" ", "\\ ")
-	vim.cmd("set splitbelow")
-	local runcommand = "split +term\\ " .. cmdinput
-	vim.cmd(runcommand)
+    vim.cmd("silent! wa!")
+    local cmdinput = vim.o.makeprg
+    cmdinput = cmdinput:gsub(" ", "\\ ")
+    vim.cmd("set splitbelow")
+    local runcommand = "split +term\\ " .. cmdinput
+    vim.cmd(runcommand)
 end
 vim.cmd(":set makeprg=python3\\ %")
 vim.keymap.set("n", "<leader>mp", runcmd)
