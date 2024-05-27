@@ -23,6 +23,11 @@ return {
                 update_root = false,
                 ignore_list = {},
             },
+            git = {
+                enable = false,
+                ignore = true,
+                timeout = 500,
+            },
         })
     end,
 }

@@ -16,6 +16,9 @@ return {
                     hidden = true,
                 },
             },
+            file_ignore_patterns = {
+                ".git/",
+            },
             defaults = {
                 path_display = { "truncate " },
                 mappings = {
