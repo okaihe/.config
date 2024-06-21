@@ -28,6 +28,7 @@ return {
                 ignore = true,
                 timeout = 500,
             },
+            view = { adaptive_size = true },
         })
     end,
 }

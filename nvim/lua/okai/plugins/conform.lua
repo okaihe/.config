@@ -23,6 +23,7 @@ return {
                 java = { "google-java-format" },
                 php = { "php" },
                 xml = { "xmlformat" },
+                angular = { "prettier" }
             },
         })
 
