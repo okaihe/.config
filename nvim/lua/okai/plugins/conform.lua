@@ -51,7 +51,7 @@ return {
         vim.keymap.set({ "n", "v" }, "<leader>dp", function()
             conform.format({
                 lsp_fallback = true,
-                async = false,
+                async = true,
                 timeout_ms = 1000,
             })
         end, { desc = "Format file or range (in visual mode)" })
