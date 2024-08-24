@@ -40,3 +40,12 @@ local options = {
 for k, v in pairs(options) do
     vim.opt[k] = v
 end
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "dart",
+  callback = function()
+    vim.bo.tabstop = 2
+    vim.bo.shiftwidth = 2
+    vim.bo.expandtab = true
+  end,
+})

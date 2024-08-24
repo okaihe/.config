@@ -23,7 +23,8 @@ return {
                 java = { "google-java-format" },
                 php = { "php" },
                 xml = { "xmlformat" },
-                angular = { "prettier" }
+                angular = { "prettier" },
+                dart = { "dart_format" }
             },
         })
 
