@@ -46,9 +46,6 @@ return {
 				row = 0,
 				col = 1,
 			},
-			yadm = {
-				enable = false,
-			},
 		})
 
 		local gs = package.loaded.gitsigns
