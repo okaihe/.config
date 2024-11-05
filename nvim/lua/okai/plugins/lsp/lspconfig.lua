@@ -11,6 +11,8 @@ return {
         local keymap = vim.keymap
         local opts = { noremap = true, silent = true }
         local on_attach = function(client, bufnr)
+            client.server_capabilities.semanticTokensProvider = nil
+
             opts.buffer = bufnr
             -- Keybinds
             opts.desc = "Show LSP references"

@@ -24,7 +24,7 @@ return {
                 php = { "php" },
                 xml = { "xmlformat" },
                 angular = { "prettier" },
-                dart = { "dart_format" }
+                dart = { "dart_format" },
             },
         })
 
@@ -38,6 +38,10 @@ return {
 
         conform.formatters["stylua"] = {
             prepend_args = { "--indent-type", "Spaces" },
+        }
+
+        conform.formatters["xmlformat"] = {
+            prepend_args = { "--indent", "4" },
         }
 
         conform.formatters["php"] = {
