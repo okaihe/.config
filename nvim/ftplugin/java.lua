@@ -26,8 +26,10 @@ if root_dir == "" then
 end
 
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
-local workspace_dir = '/Users/kaiherbst/.local/share/nvim/java/workspace-root/' .. project_name
-os.execute("mkdir " .. workspace_dir)
+local workspace_dir = '/Users/kaiherbst/.local/share/nvim/java/jdtls/' .. project_name
+if vim.loop.fs_stat(workspace_dir) == nil then
+  os.execute("mkdir -p " .. workspace_dir)
+end
 
 -- Main Config
 local config = {
@@ -129,4 +131,3 @@ local config = {
 -- end
 --
 -- require('jdtls').start_or_attach(config)
-
