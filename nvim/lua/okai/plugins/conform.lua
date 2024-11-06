@@ -29,7 +29,7 @@ return {
         })
 
         conform.formatters["black"] = {
-            prepend_args = { "--line-length", "120" },
+            prepend_args = { "--line-length", "130" },
         }
 
         conform.formatters["google-java-format"] = {
