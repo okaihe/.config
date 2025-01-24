@@ -6,7 +6,6 @@ return {
             select = {
                 telescope = {
                     previewer = true,
-                    borderchars = { " ", " ", " ", " ", " ", " ", " ", " " },
                     layout_strategy = "vertical",
                     layout_config = {
                         height = 0.6,

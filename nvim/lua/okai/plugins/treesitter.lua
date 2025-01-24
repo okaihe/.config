@@ -38,10 +38,6 @@ return {
 					"angular",
 					"php",
 				},
-				context_commentstring = {
-					enable = true,
-					enable_autocmd = false,
-				},
 				auto_install = true,
 			})
 		end,

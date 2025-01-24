@@ -163,9 +163,9 @@ return {
             on_attach = on_attach,
         })
 
-        lspconfig["pylint"].setup({
-            capabilities = capabilities,
-            on_attach = on_attach,
-        })
+        -- lspconfig["pylint"].setup({
+        --     capabilities = capabilities,
+        --     on_attach = on_attach,
+        -- })
     end,
 }
