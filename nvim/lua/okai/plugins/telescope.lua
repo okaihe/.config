@@ -16,10 +16,12 @@ return {
                     hidden = true,
                 },
             },
-            file_ignore_patterns = {
-                ".git/",
-            },
             defaults = {
+                file_ignore_patterns = {
+                    ".git/*",
+                    "node%_modules/.*",
+                    "%.angular/.*",
+                },
                 path_display = { "truncate " },
                 mappings = {
                     i = {
