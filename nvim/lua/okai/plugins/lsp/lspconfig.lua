@@ -32,7 +32,12 @@ return {
             opts.desc = "Show buffer diagnostics"
             keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
             opts.desc = "Show line diagnostics"
-            vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { noremap = true, silent = true, desc = "Show line diagnostics" })
+            vim.keymap.set(
+                "n",
+                "<leader>d",
+                vim.diagnostic.open_float,
+                { noremap = true, silent = true, desc = "Show line diagnostics" }
+            )
             opts.desc = "Go to previous diagnostic"
             keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
             opts.desc = "Go to next diagnostic"
@@ -46,12 +51,22 @@ return {
         -- used to enable autocompletion (assign to every lsp server config)
         local capabilities = cmp_nvim_lsp.default_capabilities()
 
-        -- Change the Diagnostic symbols in the sign column (gutter)
-        local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-        for type, icon in pairs(signs) do
-            local hl = "DiagnosticSign" .. type
-            vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-        end
+        vim.diagnostic.config({
+            signs = {
+                text = {
+                    [vim.diagnostic.severity.ERROR] = " ",
+                    [vim.diagnostic.severity.WARN] = " ",
+                    [vim.diagnostic.severity.INFO] = "󰋼 ",
+                    [vim.diagnostic.severity.HINT] = "󰌵 ",
+                },
+                numhl = {
+                    [vim.diagnostic.severity.ERROR] = "",
+                    [vim.diagnostic.severity.WARN] = "",
+                    [vim.diagnostic.severity.HINT] = "",
+                    [vim.diagnostic.severity.INFO] = "",
+                },
+            },
+        })
 
         lspconfig["html"].setup({
             capabilities = capabilities,

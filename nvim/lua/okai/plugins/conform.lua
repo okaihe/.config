@@ -21,7 +21,7 @@ return {
                 python = { "isort", "black" },
                 rust = { "rustfmt" },
                 java = { "google-java-format" },
-                php = { "php" },
+                php = { "prettier" },
                 xml = { "xmlformat" },
                 angular = { "prettier" },
                 dart = { "dart_format" },
@@ -44,14 +44,14 @@ return {
             prepend_args = { "--indent", "4" },
         }
 
-        conform.formatters["php"] = {
-            command = "php-cs-fixer",
-            args = {
-                "fix",
-                "$FILENAME",
-            },
-            stdin = false,
-        }
+        -- conform.formatters["php"] = {
+        --     command = "php-cs-fixer",
+        --     args = {
+        --         "fix",
+        --         "$FILENAME",
+        --     },
+        --     stdin = false,
+        -- }
 
         vim.keymap.set({ "n", "v" }, "<leader>dp", function()
             conform.format({
