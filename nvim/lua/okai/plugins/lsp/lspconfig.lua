@@ -32,7 +32,7 @@ return {
             opts.desc = "Show buffer diagnostics"
             keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
             opts.desc = "Show line diagnostics"
-            keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
+            vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { noremap = true, silent = true, desc = "Show line diagnostics" })
             opts.desc = "Go to previous diagnostic"
             keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
             opts.desc = "Go to next diagnostic"
@@ -63,12 +63,6 @@ return {
             on_attach = on_attach,
         })
 
-        -- lspconfig["docker_compose_language_service"].setup({
-        -- 	capabilities = capabilities,
-        -- 	on_attach = on_attach,
-        --     filetypes = { "yaml", "yml" }
-        -- })
-
         lspconfig["ts_ls"].setup({
             capabilities = capabilities,
             on_attach = on_attach,
@@ -83,11 +77,6 @@ return {
             capabilities = capabilities,
             on_attach = on_attach,
             filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-        })
-
-        lspconfig["pyright"].setup({
-            capabilities = capabilities,
-            on_attach = on_attach,
         })
 
         local languageServerPath = "/opt/homebrew/lib/node_modules/@angular/language-server/"
@@ -162,10 +151,5 @@ return {
             capabilities = capabilities,
             on_attach = on_attach,
         })
-
-        -- lspconfig["pylint"].setup({
-        --     capabilities = capabilities,
-        --     on_attach = on_attach,
-        -- })
     end,
 }
