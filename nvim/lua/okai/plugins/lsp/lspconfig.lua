@@ -31,13 +31,6 @@ return {
             keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
             opts.desc = "Show buffer diagnostics"
             keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
-            opts.desc = "Show line diagnostics"
-            vim.keymap.set(
-                "n",
-                "<leader>d",
-                vim.diagnostic.open_float,
-                { noremap = true, silent = true, desc = "Show line diagnostics" }
-            )
             opts.desc = "Go to previous diagnostic"
             keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
             opts.desc = "Go to next diagnostic"
@@ -47,26 +40,36 @@ return {
             opts.desc = "Restart LSP"
             keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
         end
+        vim.keymap.set("n", "<leader>k", function()
+            vim.diagnostic.config({
+                virtual_lines = { current_line = true },
+                virtual_text = false,
+                signs = {
+                    text = {
+                        [vim.diagnostic.severity.ERROR] = " ",
+                        [vim.diagnostic.severity.WARN] = " ",
+                        [vim.diagnostic.severity.INFO] = "󰋼 ",
+                        [vim.diagnostic.severity.HINT] = "󰌵 ",
+                    },
+                    numhl = {
+                        [vim.diagnostic.severity.ERROR] = "",
+                        [vim.diagnostic.severity.WARN] = "",
+                        [vim.diagnostic.severity.HINT] = "",
+                        [vim.diagnostic.severity.INFO] = "",
+                    },
+                },
+            })
+            vim.api.nvim_create_autocmd("CursorMoved", {
+                group = vim.api.nvim_create_augroup("line-diagnostics", { clear = true }),
+                callback = function()
+                    vim.diagnostic.config({ virtual_lines = false, virtual_text = true })
+                    return true
+                end,
+            })
+        end)
 
         -- used to enable autocompletion (assign to every lsp server config)
         local capabilities = cmp_nvim_lsp.default_capabilities()
-
-        vim.diagnostic.config({
-            signs = {
-                text = {
-                    [vim.diagnostic.severity.ERROR] = " ",
-                    [vim.diagnostic.severity.WARN] = " ",
-                    [vim.diagnostic.severity.INFO] = "󰋼 ",
-                    [vim.diagnostic.severity.HINT] = "󰌵 ",
-                },
-                numhl = {
-                    [vim.diagnostic.severity.ERROR] = "",
-                    [vim.diagnostic.severity.WARN] = "",
-                    [vim.diagnostic.severity.HINT] = "",
-                    [vim.diagnostic.severity.INFO] = "",
-                },
-            },
-        })
 
         lspconfig["html"].setup({
             capabilities = capabilities,
