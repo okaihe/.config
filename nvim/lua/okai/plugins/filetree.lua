@@ -29,6 +29,9 @@ return {
                 timeout = 500,
             },
             view = { adaptive_size = true },
+            filters = {
+                custom = { "__pycache__", ".DS_Store", ".pytest_cache" },
+            },
         })
     end,
 }

@@ -6,7 +6,6 @@ return {
     },
     config = function()
         local mason = require("mason")
-        local mason_lspconfig = require("mason-lspconfig")
         local mason_tool_installer = require("mason-tool-installer")
 
         mason.setup({
@@ -17,11 +16,6 @@ return {
                     package_uninstalled = "✗",
                 },
             },
-        })
-
-        mason_lspconfig.setup({
-            ensure_installed = { "lua_ls", "pyright", "eslint" },
-            automatic_installation = true,
         })
 
         mason_tool_installer.setup({

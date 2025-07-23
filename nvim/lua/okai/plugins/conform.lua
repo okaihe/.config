@@ -25,6 +25,7 @@ return {
                 xml = { "xmlformat" },
                 angular = { "prettier" },
                 dart = { "dart_format" },
+                go = { "gofumpt", "goimports" },
             },
         })
 

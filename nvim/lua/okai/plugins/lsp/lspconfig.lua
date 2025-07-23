@@ -16,7 +16,7 @@ return {
             opts.buffer = bufnr
             -- Keybinds
             opts.desc = "Show LSP references"
-            keymap.set("n", "<leader>gr", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
+            keymap.set("n", "<leader>gr", "<cmd>Telescope lsp_references<CR>", opts)
             opts.desc = "Go to declaration"
             keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, opts) -- go to declaration
             opts.desc = "Show LSP definitions"
@@ -68,10 +68,31 @@ return {
             })
         end)
 
-        -- used to enable autocompletion (assign to every lsp server config)
+        vim.keymap.set("n", "<leader>y", function()
+            local line_diagnostics = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
+            if vim.tbl_isempty(line_diagnostics) then
+                print("Keine Diagnostics auf dieser Zeile.")
+                return
+            end
+
+            local messages = {}
+            for _, diag in ipairs(line_diagnostics) do
+                table.insert(messages, diag.message)
+            end
+
+            local all_messages = table.concat(messages, "\n")
+            vim.fn.setreg("+", all_messages)
+            print("Fehlermeldung kopiert!")
+        end, { desc = "Diagnostics kopieren" })
+
         local capabilities = cmp_nvim_lsp.default_capabilities()
 
         lspconfig["html"].setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+        })
+
+        lspconfig["pyright"].setup({
             capabilities = capabilities,
             on_attach = on_attach,
         })
@@ -82,6 +103,11 @@ return {
         })
 
         lspconfig["ts_ls"].setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+        })
+
+        lspconfig["gopls"].setup({
             capabilities = capabilities,
             on_attach = on_attach,
         })
@@ -106,14 +132,6 @@ return {
             "--ngProbeLocations",
             languageServerPath,
         }
-        lspconfig["angularls"].setup({
-            capabilities = capabilities,
-            on_attach = on_attach,
-            cmd = cmd,
-            on_new_config = function(new_config, new_root_dir)
-                new_config.cmd = cmd
-            end,
-        })
 
         lspconfig["phpactor"].setup({
             capabilities = capabilities,
