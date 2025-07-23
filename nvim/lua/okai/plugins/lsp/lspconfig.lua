@@ -12,9 +12,7 @@ return {
         local opts = { noremap = true, silent = true }
         local on_attach = function(client, bufnr)
             client.server_capabilities.semanticTokensProvider = nil
-
             opts.buffer = bufnr
-            -- Keybinds
             opts.desc = "Show LSP references"
             keymap.set("n", "<leader>gr", "<cmd>Telescope lsp_references<CR>", opts)
             opts.desc = "Go to declaration"
@@ -102,7 +100,7 @@ return {
             on_attach = on_attach,
         })
 
-        lspconfig["ts_ls"].setup({
+        lspconfig["tsserver"].setup({
             capabilities = capabilities,
             on_attach = on_attach,
         })
@@ -124,14 +122,19 @@ return {
         })
 
         local languageServerPath = "/opt/homebrew/lib/node_modules/@angular/language-server/"
-        local cmd = {
-            "ngserver",
-            "--stdio",
-            "--tsProbeLocations",
-            languageServerPath,
-            "--ngProbeLocations",
-            languageServerPath,
-        }
+        lspconfig["angularls"].setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+            cmd = {
+                "ngserver",
+                "--stdio",
+                "--tsProbeLocations",
+                languageServerPath,
+                "--ngProbeLocations",
+                languageServerPath,
+            },
+            filetypes = { "typescript", "html", "typescriptreact", "javascript", "angular" },
+        })
 
         lspconfig["phpactor"].setup({
             capabilities = capabilities,
@@ -145,7 +148,7 @@ return {
         })
 
         lspconfig["rust_analyzer"].setup({
-            capabilites = capabilities,
+            capabilities = capabilities,
             on_attach = on_attach,
             assist = {
                 importEnforceGranularity = true,
@@ -162,18 +165,15 @@ return {
             },
         })
 
-        -- configure lua server (with special settings)
         lspconfig["lua_ls"].setup({
             capabilities = capabilities,
             on_attach = on_attach,
-            settings = { -- custom settings for lua
+            settings = {
                 Lua = {
-                    -- make the language server recognize "vim" global
                     diagnostics = {
                         globals = { "vim" },
                     },
                     workspace = {
-                        -- make language server aware of runtime files
                         library = {
                             [vim.fn.expand("$VIMRUNTIME/lua")] = true,
                             [vim.fn.stdpath("config") .. "/lua"] = true,
