@@ -45,15 +45,6 @@ return {
             prepend_args = { "--indent", "4" },
         }
 
-        -- conform.formatters["php"] = {
-        --     command = "php-cs-fixer",
-        --     args = {
-        --         "fix",
-        --         "$FILENAME",
-        --     },
-        --     stdin = false,
-        -- }
-
         vim.keymap.set({ "n", "v" }, "<leader>dp", function()
             conform.format({
                 lsp_fallback = true,

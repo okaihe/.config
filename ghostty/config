@@ -3,7 +3,7 @@ font-size = 13
 font-family = "JetBrainsMono Nerd Font Mono"
 adjust-cell-height = 10
 
-background-opacity = 0.90
+background-opacity = 0.95
 background-blur-radius = 100
 
 window-padding-x = 8
