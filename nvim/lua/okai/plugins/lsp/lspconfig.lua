@@ -100,7 +100,7 @@ return {
             on_attach = on_attach,
         })
 
-        lspconfig["tsserver"].setup({
+        lspconfig["ts_ls"].setup({
             capabilities = capabilities,
             on_attach = on_attach,
         })
@@ -113,6 +113,17 @@ return {
         lspconfig["cssls"].setup({
             capabilities = capabilities,
             on_attach = on_attach,
+        })
+
+        lspconfig["yamlls"].setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+        })
+
+        lspconfig["gitlab_ci_ls"].setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+            filetypes = { "yaml.gitlab" },
         })
 
         lspconfig["emmet_ls"].setup({
