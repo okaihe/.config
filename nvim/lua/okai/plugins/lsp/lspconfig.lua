@@ -78,6 +78,11 @@ return {
             })
         end)
 
+        local function lsp_available(name)
+            local mason_path = vim.fn.stdpath("data") .. "/mason/bin/" .. name
+            return vim.fn.executable(mason_path) == 1
+        end
+
         vim.keymap.set("n", "<leader>y", function()
             local line_diagnostics = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
             if vim.tbl_isempty(line_diagnostics) then
@@ -109,10 +114,7 @@ return {
             },
         })
 
-        vim.lsp.enable("dockerls")
-        vim.lsp.config("dockerls", { capabilities = capabilities, on_attach = on_attach })
-
-        vim.lsp.enable("tsls")
+        vim.lsp.enable("ts_ls")
         vim.lsp.config("ts_ls", { capabilities = capabilities, on_attach = on_attach })
 
         vim.lsp.enable("gopls")
@@ -178,28 +180,25 @@ return {
             filetypes = { "typescript", "html", "typescriptreact", "javascript", "angular" },
         })
 
-        vim.lsp.enable("phpactor")
-        vim.lsp.config("phpactor", { capabilities = capabilities, on_attach = on_attach })
+        if lsp_available("phpactor") then
+            vim.lsp.enable("phpactor")
+            vim.lsp.config("phpactor", { capabilities = capabilities, on_attach = on_attach })
+        end
 
-        vim.lsp.enable("jdtls")
-        vim.lsp.config("jdtls", {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            root_dir = vim.fs.root(0, { "pom.xml", "build.gradle", ".git" }) or vim.fn.getcwd(),
-        })
-
-        vim.lsp.enable("rust_analyzer")
-        vim.lsp.config("rust_analyzer", {
-            capabilities = capabilities,
-            on_attach = on_attach,
-            settings = {
-                ["rust-analyzer"] = {
-                    assist = { importEnforceGranularity = true, importPrefix = "crate" },
-                    cargo = { allFeatures = true },
-                    diagnostics = { enable = true, experimental = { enable = true } },
+        if lsp_available("rust_analyzer") then
+            vim.lsp.enable("rust_analyzer")
+            vim.lsp.config("rust_analyzer", {
+                capabilities = capabilities,
+                on_attach = on_attach,
+                settings = {
+                    ["rust-analyzer"] = {
+                        assist = { importEnforceGranularity = true, importPrefix = "crate" },
+                        cargo = { allFeatures = true },
+                        diagnostics = { enable = true, experimental = { enable = true } },
+                    },
                 },
-            },
-        })
+            })
+        end
 
         vim.lsp.enable("lua_ls")
         vim.lsp.config("lua_ls", {
@@ -218,7 +217,9 @@ return {
             },
         })
 
-        vim.lsp.enable("texlab")
-        vim.lsp.config("texlab", { capabilities = capabilities, on_attach = on_attach })
+        if lsp_available("phpactor") then
+            vim.lsp.enable("texlab")
+            vim.lsp.config("texlab", { capabilities = capabilities, on_attach = on_attach })
+        end
     end,
 }
