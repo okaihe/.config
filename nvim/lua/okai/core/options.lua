@@ -42,16 +42,16 @@ for k, v in pairs(options) do
 end
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "dart",
-  callback = function()
-    vim.bo.tabstop = 2
-    vim.bo.shiftwidth = 2
-    vim.bo.expandtab = true
-  end,
+    pattern = "dart",
+    callback = function()
+        vim.bo.tabstop = 2
+        vim.bo.shiftwidth = 2
+        vim.bo.expandtab = true
+    end,
 })
 
 vim.filetype.add({
-  pattern = {
-    ['%.gitlab%-ci%.ya?ml'] = 'yaml.gitlab',
-  },
+    pattern = {
+        ["%.gitlab%-ci%.ya?ml"] = "yaml.gitlab",
+    },
 })
