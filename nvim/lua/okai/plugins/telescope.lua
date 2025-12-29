@@ -11,6 +11,7 @@ return {
         local telescope = require("telescope")
         local actions = require("telescope.actions")
         local builtin = require("telescope.builtin")
+        local open_with_trouble = require("trouble.sources.telescope").open
 
         telescope.setup({
             defaults = {
@@ -29,6 +30,7 @@ return {
                         ["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
                         ["<C-u>"] = actions.preview_scrolling_up,
                         ["<C-d>"] = actions.preview_scrolling_down,
+                        ["<C-t>"] = open_with_trouble,
                     },
                 },
             },

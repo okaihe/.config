@@ -4,15 +4,15 @@ return {
     dependencies = {
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-path",
-        "onsails/lspkind.nvim",
         "L3MON4D3/LuaSnip",
         "saadparwaiz1/cmp_luasnip",
         "rafamadriz/friendly-snippets",
+        "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
         local cmp = require("cmp")
-        local lspkind = require("lspkind")
         local luasnip = require("luasnip")
+
         require("luasnip.loaders.from_vscode").lazy_load()
 
         cmp.setup({
@@ -23,6 +23,10 @@ return {
             },
             completion = {
                 completeopt = "menu,menuone,preview,noselect",
+            },
+            window = {
+                completion = cmp.config.window.bordered(),
+                documentation = cmp.config.window.bordered(),
             },
             mapping = cmp.mapping.preset.insert({
                 ["<C-k>"] = cmp.mapping.select_prev_item(),
@@ -36,14 +40,61 @@ return {
             sources = cmp.config.sources({
                 { name = "nvim_lsp" },
                 { name = "luasnip" },
-                { name = "buffer" },
+                {
+                    name = "buffer",
+                    option = {
+                        get_bufnrs = function()
+                            local bufs = {}
+                            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                                local byte_size = vim.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf))
+                                if byte_size < 1024 * 1024 then
+                                    table.insert(bufs, buf)
+                                end
+                            end
+                            return bufs
+                        end,
+                    },
+                },
                 { name = "path" },
             }),
             formatting = {
-                format = lspkind.cmp_format({
-                    maxwidth = 50,
-                    ellipsis_char = "...",
-                }),
+                format = function(entry, vim_item)
+                    local icons = {
+                        Text = "",
+                        Method = "󰆧",
+                        Function = "󰊕",
+                        Constructor = "",
+                        Field = "󰇽",
+                        Variable = "󰂡",
+                        Class = "󰠱",
+                        Interface = "",
+                        Module = "",
+                        Property = "󰜢",
+                        Unit = "",
+                        Value = "󰎠",
+                        Enum = "",
+                        Keyword = "󰌋",
+                        Snippet = "",
+                        Color = "󰏘",
+                        File = "󰈙",
+                        Reference = "",
+                        Folder = "󰉋",
+                        EnumMember = "",
+                        Constant = "󰏿",
+                        Struct = "",
+                        Event = "",
+                        Operator = "󰆕",
+                        TypeParameter = "󰅲",
+                    }
+                    vim_item.kind = string.format("%s %s", icons[vim_item.kind] or "", vim_item.kind)
+                    vim_item.menu = ({
+                        buffer = "[Buf]",
+                        nvim_lsp = "[LSP]",
+                        luasnip = "[Snip]",
+                        path = "[Path]",
+                    })[entry.source.name]
+                    return vim_item
+                end,
             },
         })
     end,
