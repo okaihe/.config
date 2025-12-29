@@ -3,10 +3,13 @@ return {
     lazy = false,
     dependencies = {
         "nvim-lua/plenary.nvim",
-        "stevearc/dressing.nvim", -- optional for vim.ui.select
+        "stevearc/dressing.nvim",
     },
     config = function()
         require("flutter-tools").setup({
+            ui = {
+                border = "rounded",
+            },
             decorations = {
                 statusline = {
                     app_version = true,
@@ -14,20 +17,31 @@ return {
                     project_config = true,
                 },
             },
+            lsp = {
+                on_attach = function(client, bufnr)
+                    local opts = { buffer = bufnr, noremap = true, silent = true }
+                    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+                    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+                    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+                    vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
+                end,
+            },
         })
 
-        local opts = { noremap = true, silent = true }
-        -- keymap("n", "<leader>e", ":Explore <cr>", opts)
-        vim.cmd([[ nnoremap <leader>ca <Cmd>lua vim.lsp.buf.code_action()<CR> ]])
-        vim.cmd([[ xnoremap <leader>ca <Cmd>lua vim.lsp.buf.range_code_action()<CR> ]])
-        vim.cmd([[ nnoremap <leader>gd <Cmd>lua vim.lsp.buf.definition()<CR> ]])
-        vim.cmd([[ nnoremap <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR> ]])
-        vim.cmd([[ nnoremap K <Cmd>lua vim.lsp.buf.hover()<CR> ]])
-        vim.api.nvim_set_keymap("n", "<leader>fo", ":FlutterOutlineToggle<cr>", opts)
-        vim.api.nvim_set_keymap("n", "<leader>fd", ":FlutterOpenDevTools<cr>", opts)
-        vim.api.nvim_set_keymap("n", "<leader>fR", ":FlutterRun<cr>", opts)
-        vim.api.nvim_set_keymap("n", "<leader>fl", ":FlutterReload<cr>", opts)
-        vim.api.nvim_set_keymap("n", "<leader>fr", ":FlutterRestart<cr>", opts)
-        vim.api.nvim_set_keymap("n", "<leader>fq", ":FlutterQuit<cr>", opts)
+        -- Globale Flutter Keymaps
+        local keymap = vim.keymap.set
+        local opts = { noremap = true, silent = true, desc = "Flutter" }
+
+        -- Starten / Stoppen
+        keymap("n", "<leader>Fr", "<cmd>FlutterRun<cr>", { desc = "Flutter Run", unpack(opts) })
+        keymap("n", "<leader>Fq", "<cmd>FlutterQuit<cr>", { desc = "Flutter Quit", unpack(opts) })
+
+        -- Reloads
+        keymap("n", "<leader>Fl", "<cmd>FlutterReload<cr>", { desc = "Hot Reload", unpack(opts) })
+        keymap("n", "<leader>FR", "<cmd>FlutterRestart<cr>", { desc = "Full Restart", unpack(opts) })
+
+        -- Tools
+        keymap("n", "<leader>Fd", "<cmd>FlutterOpenDevTools<cr>", { desc = "Open DevTools", unpack(opts) })
+        keymap("n", "<leader>Fo", "<cmd>FlutterOutlineToggle<cr>", { desc = "Toggle Outline", unpack(opts) })
     end,
 }

@@ -3,11 +3,10 @@ return {
     priority = 1000,
     config = function()
         require("catppuccin").setup({
-            flavour = "auto", -- latte, frappe, macchiato, mocha
-            background = { -- :h background
+            flavour = "auto",
+            background = {
                 light = "latte",
                 dark = "mocha",
-
             },
             transparent_background = true, -- disables setting the background color.
             show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
@@ -33,7 +32,6 @@ return {
                 properties = {},
                 types = {},
                 operators = {},
-                -- miscs = {}, -- Uncomment to turn off hard-coded styles
             },
             default_integrations = true,
             integrations = {
@@ -45,7 +43,6 @@ return {
                     enabled = true,
                     indentscope_color = "",
                 },
-                -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
             },
             color_overrides = {
                 all = {},
@@ -54,17 +51,6 @@ return {
                 LineNr = { fg = "#919191" },
             },
         })
-
-        -- setup must be called before loading
         vim.cmd([[colorscheme catppuccin-mocha]])
     end,
 }
--- return {
---     "okaihe/okai",
---     lazy = false,
---     priority = 1000,
---     config = function()
---         require("okai").setup({})
---         vim.cmd([[colorscheme okai]])
---     end,
--- }
