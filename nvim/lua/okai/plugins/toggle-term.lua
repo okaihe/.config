@@ -2,9 +2,7 @@ return {
     "akinsho/toggleterm.nvim",
     version = "*",
     config = function()
-        local toggleterm = require("toggleterm")
-
-        toggleterm.setup({
+        require("toggleterm").setup({
             size = 20,
             open_mapping = nil,
             hide_numbers = true,
@@ -31,140 +29,173 @@ return {
 
         local Terminal = require("toggleterm.terminal").Terminal
 
-        -- Runner (Python, Rust, single scripts)
+        local function get_defaults()
+            local ft = vim.bo.filetype
+            local file = vim.fn.expand("%")
+
+            -- Defaults
+            local run_cmd = "echo 'No run command'"
+            local server_cmd = "echo 'No server command'"
+
+            if ft == "rust" then
+                run_cmd = "cargo run"
+                server_cmd = "cargo watch -x run"
+            elseif ft == "python" then
+                run_cmd = "python3 " .. file
+                server_cmd = "python3 -m http.server"
+            elseif ft == "java" then
+                run_cmd = "mvn test"
+                -- Dein spezieller Java Command:
+                server_cmd = "setjava 17 && readenv && mvn spring-boot:run"
+            elseif ft == "typescript" or ft == "html" or ft == "css" or ft == "javascript" then
+                -- Einfache Angular Erkennung
+                if vim.fn.glob("angular.json") ~= "" then
+                    server_cmd = "ng serve"
+                    run_cmd = "ng test"
+                else
+                    run_cmd = "npm start"
+                    server_cmd = "npm run dev"
+                end
+            end
+
+            return run_cmd, server_cmd
+        end
+
+        -- RUNNER (Scripts)
         local runner_term = nil
         local last_run_cmd = nil
 
-        local function execute_run(cmd)
-            last_run_cmd = cmd
-            if runner_term then
-                runner_term:shutdown()
-            end
-
-            runner_term = Terminal:new({
-                cmd = cmd,
-                direction = "float",
-                on_open = function(term)
-                    vim.cmd("startinsert!")
-                    vim.api.nvim_buf_set_keymap(
-                        term.bufnr,
-                        "n",
-                        "q",
-                        "<cmd>close<CR>",
-                        { noremap = true, silent = true }
-                    )
-                end,
-            })
-            runner_term:toggle()
-        end
-
         local function smart_runner(force_ask)
-            local ft = vim.bo.filetype
-            local file = vim.fn.expand("%")
-            local default = "echo 'No default'"
-
-            if ft == "rust" then
-                default = "cargo run"
-            elseif ft == "python" then
-                default = "python3 " .. file
-            elseif ft == "javascript" then
-                default = "npm start"
-            end
+            local default_run, _ = get_defaults()
 
             if last_run_cmd and not force_ask then
-                execute_run(last_run_cmd)
+                if runner_term then
+                    runner_term:shutdown()
+                end
+
+                runner_term = Terminal:new({
+                    cmd = last_run_cmd,
+                    direction = "float",
+                    on_open = function(term)
+                        vim.cmd("startinsert!")
+                        vim.api.nvim_buf_set_keymap(
+                            term.bufnr,
+                            "n",
+                            "q",
+                            "<cmd>close<CR>",
+                            { noremap = true, silent = true }
+                        )
+                    end,
+                })
+                runner_term:toggle()
             else
-                vim.ui.input({ prompt = "Command: ", default = last_run_cmd or default }, function(input)
+                vim.ui.input({ prompt = "Runner Command: ", default = last_run_cmd or default_run }, function(input)
                     if input then
-                        execute_run(input)
+                        last_run_cmd = input
+                        smart_runner(false)
                     end
                 end)
             end
         end
 
-        -- Toggle Output (Nur ansehen, nicht neu starten)
-        local function toggle_last_output()
+        local function toggle_runner_output()
             if runner_term then
                 runner_term:toggle()
-                -- TRICK: Wenn das Fenster aufgeht, erzwingen wir Normal Mode zum Scrollen!
                 if runner_term:is_open() then
                     vim.cmd("stopinsert")
                 end
             else
-                print("Kein aktiver Runner!")
+                print("Kein Runner aktiv.")
             end
         end
 
-        -- Server (Angular, Java etc.)
-        -- Java Spring Boot
-        local java_term = Terminal:new({
-            cmd = "setjava 17 && readenv && mvn spring-boot:run",
-            direction = "horizontal",
-            hidden = true,
-            on_open = function(term)
-                vim.cmd("startinsert!")
-            end,
-        })
+        -- SERVER
+        local server_term = nil
+        local last_server_cmd = nil
 
-        -- Angular Serve
-        local ng_term = Terminal:new({
-            cmd = "ng serve",
-            direction = "horizontal",
-            hidden = true,
-            on_open = function(term)
-                vim.cmd("startinsert!")
-            end,
-        })
+        local function smart_server(force_new)
+            local _, default_server = get_defaults()
 
-        local function toggle_server(term_instance)
-            term_instance:toggle()
+            if server_term and not force_new then
+                server_term:toggle()
+                if server_term:is_open() then
+                    vim.cmd("startinsert!")
+                end
+                return
+            end
+
+            vim.ui.input({ prompt = "Server Command: ", default = last_server_cmd or default_server }, function(input)
+                if input then
+                    last_server_cmd = input
+
+                    if server_term then
+                        server_term:shutdown()
+                    end
+
+                    server_term = Terminal:new({
+                        cmd = input,
+                        direction = "horizontal", -- Server unten angedockt
+                        hidden = true,
+                        on_open = function(term)
+                            vim.cmd("startinsert!")
+                            vim.api.nvim_buf_set_keymap(
+                                term.bufnr,
+                                "n",
+                                "q",
+                                "<cmd>close<CR>",
+                                { noremap = true, silent = true }
+                            )
+                        end,
+                    })
+                    server_term:toggle()
+                end
+            end)
         end
 
+        -- LAZYGIT
         local lazygit = Terminal:new({
             cmd = "lazygit",
             dir = "git_dir",
             direction = "float",
-            float_opts = {
-                border = "double",
-            },
+            float_opts = { border = "double" },
             on_open = function(term)
                 vim.cmd("startinsert!")
-                vim.api.nvim_buf_del_keymap(term.bufnr, "t", "<C-h>")
-                vim.api.nvim_buf_del_keymap(term.bufnr, "t", "<C-j>")
-                vim.api.nvim_buf_del_keymap(term.bufnr, "t", "<C-k>")
-                vim.api.nvim_buf_del_keymap(term.bufnr, "t", "<C-l>")
+                -- Navigation löschen, damit LazyGit j/k nutzen kann
+                local opts = { buffer = term.bufnr }
+                vim.keymap.del("t", "<C-h>", opts)
+                vim.keymap.del("t", "<C-j>", opts)
+                vim.keymap.del("t", "<C-k>", opts)
+                vim.keymap.del("t", "<C-l>", opts)
             end,
             close_on_exit = true,
         })
 
-        local function _lazygit_toggle()
-            lazygit:toggle()
-        end
-
         -- KEYMAPS
         local k = vim.keymap.set
 
-        -- Runner Mappings
+        -- Runner
         k("n", "<leader>tr", function()
             smart_runner(false)
         end, { desc = "Run: Start/Restart" })
         k("n", "<leader>tR", function()
             smart_runner(true)
-        end, { desc = "Run: Set Command" })
-        k("n", "<leader>to", toggle_last_output, { desc = "Run: Show Output (Normal Mode)" })
+        end, { desc = "Run: Config Command" })
+        k("n", "<leader>to", toggle_runner_output, { desc = "Run: Output ansehen" })
 
-        -- LazyGit Shortcut
-        k("n", "<leader>gg", _lazygit_toggle, { desc = "Git: LazyGit" })
+        -- Server
+        k("n", "<leader>ts", function()
+            smart_server(false)
+        end, { desc = "Server: Start/Toggle" })
+        k("n", "<leader>tS", function()
+            smart_server(true)
+        end, { desc = "Server: Config/Restart" })
 
-        -- Server Mappings (Separate Instanzen!)
-        k("n", "<leader>tj", function()
-            toggle_server(java_term)
-        end, { desc = "Server: Java Spring" })
-        k("n", "<leader>ta", function()
-            toggle_server(ng_term)
-        end, { desc = "Server: Angular" })
+        -- Git
+        k("n", "<leader>gg", function()
+            lazygit:toggle()
+        end, { desc = "Git: LazyGit" })
 
-        -- Globales Terminal
+        -- Global
         k("n", "<leader>tt", "<cmd>ToggleTerm direction=float<cr>", { desc = "Terminal: Float" })
     end,
 }
