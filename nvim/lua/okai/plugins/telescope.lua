@@ -13,6 +13,16 @@ return {
         local builtin = require("telescope.builtin")
         local open_with_trouble = require("trouble.sources.telescope").open
 
+        -- Open file in oil
+        local open_selected_with_oil = function(prompt_bufnr)
+            local action_state = require("telescope.actions.state")
+            local entry = action_state.get_selected_entry()
+            actions.close(prompt_bufnr)
+            local path = entry.path or entry.filename
+            local dir = vim.fn.fnamemodify(path, ":h")
+            require("oil").open(dir)
+        end
+
         telescope.setup({
             defaults = {
                 path_display = { "filename_first" },
@@ -31,6 +41,7 @@ return {
                         ["<C-u>"] = actions.preview_scrolling_up,
                         ["<C-d>"] = actions.preview_scrolling_down,
                         ["<C-t>"] = open_with_trouble,
+                        ["<A-o>"] = open_selected_with_oil,
                     },
                 },
             },
@@ -59,7 +70,7 @@ return {
 
         local keymap = vim.keymap
 
-        -- 1. Datei-Navigation (Ersatz für Bufferline & Filetree)
+        -- File navigation
         keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Finde Dateien" })
         keymap.set("n", "<leader>fb", function()
             builtin.buffers({
@@ -70,16 +81,24 @@ return {
         end, { desc = "Finde offene Buffer" })
         keymap.set("n", "<leader>fo", builtin.oldfiles, { desc = "History (Zuletzt geöffnet)" })
 
-        -- 2. Suche im Code
+        -- Search code
         keymap.set("n", "<leader>fs", builtin.live_grep, { desc = "Suche String im Projekt" })
         keymap.set("n", "<leader>fc", builtin.grep_string, { desc = "Suche Wort unter Cursor" })
 
-        -- 3. Fehler & Code-Analyse (LSP Integration)
+        -- Code analysis and lsp
         keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Zeige Fehler/Warnungen (Projekt)" })
         keymap.set("n", "<leader>fi", builtin.lsp_implementations, { desc = "Finde Implementierungen (Interface)" })
 
-        -- 4. Hilfe & Diverses
+        -- Help
         keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Neovim Hilfe" })
         keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Zeige alle Keymaps" })
+
+        -- Explore symbols
+        keymap.set("n", "<leader>ss", function()
+            builtin.lsp_document_symbols({
+                symbols = { "Class", "Function", "Method", "Constructor", "Interface", "Module" },
+            })
+        end, { desc = "Gefilterte Symbole" })
+        keymap.set("n", "<leader>sS", builtin.lsp_dynamic_workspace_symbols, { desc = "Projekt Struktur" })
     end,
 }

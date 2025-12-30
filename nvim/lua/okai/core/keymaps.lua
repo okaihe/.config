@@ -1,23 +1,10 @@
+local keymap = vim.keymap.set
 local opts = { noremap = true, silent = true }
-
--- Shorten function name
-local keymap = vim.api.nvim_set_keymap
 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", opts)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-
--- Modes
--- normal_mode = "n",
--- insert_mode = "i",
--- visual_mode = "v",
--- visual_block_mode = "x",
--- term_mode = "t",
--- command_mode = "c",
-
--- Explorer
-keymap("n", "<leader>e", ":Explore <cr>", opts)
 
 -- Resize with arrows
 keymap("n", "<M-Up>", ":resize +2<CR>", opts)
@@ -40,7 +27,7 @@ keymap("n", "0", "g0", opts)
 keymap("n", "$", "g$", opts)
 
 -- Close Buffer
-keymap("n", "<leader>bc", ":bp|bd #<CR>", opts) -- Close but keep the split
+keymap("n", "<leader>bc", ":bp|bd #<CR>", opts)
 keymap("n", "<leader>bw", ":bw!<CR>", opts)
 
 -- Cursor position while traversing search
@@ -49,9 +36,6 @@ keymap("n", "n", "nzzzv", opts)
 -- Cursor position while moving page wise
 keymap("n", "<C-d>", "<C-d>zz", opts)
 keymap("n", "<C-u>", "<C-u>zz", opts)
-
--- Jump to end of file
-keymap("n", "-", "g$", opts)
 
 -- Cursor position while J
 keymap("n", "J", "mzJ`z", opts)
@@ -70,6 +54,10 @@ local function runcmd()
 end
 vim.cmd(":set makeprg=python3\\ %")
 vim.keymap.set("n", "<leader>mp", runcmd)
+
+-- Löschen ohne den Text ins Register zu kopieren (Void Register)
+keymap("n", "<leader>d", [["_d]], opts)
+keymap("v", "<leader>d", [["_d]], opts)
 
 -- Insert --
 -- Move one character or line

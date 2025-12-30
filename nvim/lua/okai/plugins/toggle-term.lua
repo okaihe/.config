@@ -160,12 +160,12 @@ return {
             float_opts = { border = "double" },
             on_open = function(term)
                 vim.cmd("startinsert!")
-                -- Navigation löschen, damit LazyGit j/k nutzen kann
                 local opts = { buffer = term.bufnr }
                 vim.keymap.del("t", "<C-h>", opts)
                 vim.keymap.del("t", "<C-j>", opts)
                 vim.keymap.del("t", "<C-k>", opts)
                 vim.keymap.del("t", "<C-l>", opts)
+                vim.keymap.del("t", "<esc>", opts)
             end,
             close_on_exit = true,
         })
