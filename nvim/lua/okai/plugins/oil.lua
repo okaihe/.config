@@ -30,8 +30,5 @@ return {
             },
         })
         vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
-        vim.keymap.set("n", "<leader>e", function()
-            require("oil").toggle_float()
-        end, { desc = "Oil File Explorer (Floating)" })
     end,
 }
