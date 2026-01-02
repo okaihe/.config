@@ -84,7 +84,7 @@ keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", opts)
 keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 
 -- Better escape from terminal
-keymap("t", "<esc>", "<C-\\><C-N>", opts)
+-- keymap("t", "<esc>", "<C-\\><C-N>", opts)
 
 -- Better copy from/to systems clipboard
 keymap("v", "<leader>y", '"*y', opts)

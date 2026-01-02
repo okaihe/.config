@@ -166,6 +166,7 @@ return {
             on_open = function(term)
                 vim.cmd("startinsert!")
                 local opts = { buffer = term.bufnr }
+                vim.keymap.del("t", "<esc>", opts)
                 vim.keymap.del("t", "<C-h>", opts)
                 vim.keymap.del("t", "<C-j>", opts)
                 vim.keymap.del("t", "<C-k>", opts)
@@ -200,6 +201,9 @@ return {
         end, { desc = "Git: LazyGit" })
 
         -- Global
-        k("n", "<leader>tt", "<cmd>ToggleTerm direction=float<cr>", { desc = "Terminal: Float" })
+        k("n", "<leader>tt", "<cmd>1ToggleTerm direction=float<cr>", { desc = "Terminal: Float" })
+        k("n", "<leader>t1", "<cmd>1ToggleTerm direction=float<cr>", { desc = "Terminal: Float" })
+        k("n", "<leader>t2", "<cmd>2ToggleTerm direction=float<cr>", { desc = "Terminal: Float" })
+        k("n", "<leader>t2", "<cmd>3ToggleTerm direction=float<cr>", { desc = "Terminal: Float" })
     end,
 }
