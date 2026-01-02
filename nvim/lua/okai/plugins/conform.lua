@@ -25,13 +25,11 @@ return {
                 xml = { "xmlformat" },
                 dart = { "dart_format" },
                 go = { "gofumpt", "goimports" },
-
-                -- HIER WAREN DIE FEHLENDEN EINTRÄGE:
-                typescript = { "prettier" }, -- Wichtig für .ts Files
-                htmlangular = { "prettier" }, -- Wichtig, falls filetype=angular ist
+                typescript = { "prettier" },
+                htmlangular = { "prettier" },
+                c = { "clang-format" },
             },
 
-            -- Optional: Fallback, falls der Dateityp gar nicht gefunden wird
             format_on_save = {
                 lsp_fallback = true,
                 timeout_ms = 500,
@@ -54,12 +52,8 @@ return {
             prepend_args = { "--indent", "4" },
         }
 
-        -- Custom Prettier Setup für Angular Files
-        -- Manchmal zickt Prettier bei "angular" filetypes, wenn er den Parser nicht rät.
-        -- Das hier zwingt ihn dazu.
         conform.formatters["prettier"] = {
             options = {
-                -- Fügt automatisch den richtigen Parser hinzu, wenn filetype angular ist
                 ft_parsers = {
                     angular = "angular",
                 },

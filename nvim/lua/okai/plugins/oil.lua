@@ -3,6 +3,12 @@ return {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
         require("oil").setup({
+            columns = {
+                "icon",
+                "permissions",
+                "size",
+                "mtime",
+            },
             view_options = {
                 show_hidden = true,
                 is_always_hidden = function(name, _)
@@ -30,5 +36,17 @@ return {
             },
         })
         vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
+        local function open_oil_dir_in_finder()
+            local oil = require("oil")
+            local dir = oil.get_current_dir()
+            if dir then
+                vim.fn.system({ "open", dir })
+            end
+        end
+
+        vim.keymap.set("n", "<leader>of", open_oil_dir_in_finder, {
+            desc = "Open Oil dir in Finder",
+        })
     end,
 }

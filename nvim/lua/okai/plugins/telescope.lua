@@ -41,7 +41,7 @@ return {
                         ["<C-u>"] = actions.preview_scrolling_up,
                         ["<C-d>"] = actions.preview_scrolling_down,
                         ["<C-t>"] = open_with_trouble,
-                        ["<A-o>"] = open_selected_with_oil,
+                        ["<C-o>"] = open_selected_with_oil,
                     },
                 },
             },

@@ -32,8 +32,6 @@ return {
         local function get_defaults()
             local ft = vim.bo.filetype
             local file = vim.fn.expand("%")
-
-            -- Defaults
             local run_cmd = "echo 'No run command'"
             local server_cmd = "echo 'No server command'"
 
@@ -45,10 +43,10 @@ return {
                 server_cmd = "python3 -m http.server"
             elseif ft == "java" then
                 run_cmd = "mvn test"
-                -- Dein spezieller Java Command:
                 server_cmd = "setjava 17 && readenv && mvn spring-boot:run"
+            elseif ft == "c" then
+                run_cmd = "clang main.c -o main && ./main"
             elseif ft == "typescript" or ft == "html" or ft == "css" or ft == "javascript" then
-                -- Einfache Angular Erkennung
                 if vim.fn.glob("angular.json") ~= "" then
                     server_cmd = "ng serve"
                     run_cmd = "ng test"
@@ -57,7 +55,6 @@ return {
                     server_cmd = "npm run dev"
                 end
             end
-
             return run_cmd, server_cmd
         end
 
@@ -76,8 +73,11 @@ return {
                 runner_term = Terminal:new({
                     cmd = last_run_cmd,
                     direction = "float",
+                    auto_scroll = false,
                     on_open = function(term)
-                        vim.cmd("startinsert!")
+                        vim.cmd("stopinsert")
+                        vim.cmd("normal! gg")
+
                         vim.api.nvim_buf_set_keymap(
                             term.bufnr,
                             "n",
@@ -103,6 +103,7 @@ return {
                 runner_term:toggle()
                 if runner_term:is_open() then
                     vim.cmd("stopinsert")
+                    vim.cmd("normal! gg")
                 end
             else
                 print("Kein Runner aktiv.")
@@ -119,7 +120,8 @@ return {
             if server_term and not force_new then
                 server_term:toggle()
                 if server_term:is_open() then
-                    vim.cmd("startinsert!")
+                    vim.cmd("stopinsert")
+                    vim.cmd("normal! gg")
                 end
                 return
             end
@@ -134,10 +136,13 @@ return {
 
                     server_term = Terminal:new({
                         cmd = input,
-                        direction = "horizontal", -- Server unten angedockt
+                        direction = "horizontal",
                         hidden = true,
+                        auto_scroll = false,
                         on_open = function(term)
-                            vim.cmd("startinsert!")
+                            vim.cmd("stopinsert")
+                            vim.cmd("normal! gg")
+
                             vim.api.nvim_buf_set_keymap(
                                 term.bufnr,
                                 "n",
@@ -165,7 +170,6 @@ return {
                 vim.keymap.del("t", "<C-j>", opts)
                 vim.keymap.del("t", "<C-k>", opts)
                 vim.keymap.del("t", "<C-l>", opts)
-                vim.keymap.del("t", "<esc>", opts)
             end,
             close_on_exit = true,
         })
