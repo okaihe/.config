@@ -12,6 +12,12 @@ return {
         local mason_lspconfig = require("mason-lspconfig")
         local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
+        local signs = { Error = "✘", Warn = "▲", Hint = "⚑", Info = "»" }
+        for type, icon in pairs(signs) do
+            local hl = "DiagnosticSign" .. type
+            vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+        end
+
         local keymap = vim.keymap
         local opts = { noremap = true, silent = true }
 
@@ -24,7 +30,7 @@ return {
             end
         end
 
-        local on_attach = function(client, bufnr)
+        local on_attach = function(_, bufnr)
             opts.buffer = bufnr
 
             opts.desc = "Go to definition"
@@ -119,13 +125,14 @@ return {
                 "gopls",
                 "cssls",
                 "yamlls",
-                "emmet_ls",
                 "jdtls",
                 "rust_analyzer",
                 "lua_ls",
                 "texlab",
                 "gitlab_ci_ls",
                 "phpactor",
+                "emmet_language_server",
+                "taplo",
             },
             handlers = {
                 function(server_name)
@@ -156,34 +163,6 @@ return {
                     })
                 end,
 
-                ["yamlls"] = function()
-                    lspconfig["yamlls"].setup({
-                        capabilities = capabilities,
-                        on_attach = on_attach,
-                        settings = {
-                            yaml = {
-                                schemas = {
-                                    ["https://raw.githubusercontent.com/awslabs/goformation/master/schema/cloudformation.json"] = "*.template",
-                                },
-                                customTags = {
-                                    "!Ref",
-                                    "!ImportValue",
-                                    "!Sub",
-                                    "!Join",
-                                    "!GetAtt",
-                                    "!FindInMap",
-                                    "!Equals",
-                                    "!And",
-                                    "!Or",
-                                    "!Not",
-                                    "!If",
-                                },
-                                validate = true,
-                            },
-                        },
-                    })
-                end,
-
                 ["lua_ls"] = function()
                     lspconfig["lua_ls"].setup({
                         capabilities = capabilities,
@@ -202,34 +181,24 @@ return {
                     })
                 end,
 
-                ["rust_analyzer"] = function()
-                    lspconfig["rust_analyzer"].setup({
-                        capabilities = capabilities,
-                        on_attach = on_attach,
-                        settings = {
-                            ["rust-analyzer"] = {
-                                assist = { importEnforceGranularity = true, importPrefix = "crate" },
-                                cargo = { allFeatures = true },
-                                diagnostics = { enable = true, experimental = { enable = true } },
-                            },
-                        },
-                    })
-                end,
-
-                ["emmet_ls"] = function()
-                    lspconfig["emmet_ls"].setup({
+                ["emmet_language_server"] = function()
+                    lspconfig["emmet_language_server"].setup({
                         capabilities = capabilities,
                         on_attach = on_attach,
                         filetypes = {
-                            "html",
-                            "typescriptreact",
-                            "javascriptreact",
-                            "htmlangular",
                             "css",
+                            "eruby",
+                            "html",
+                            "javascript",
+                            "javascriptreact",
+                            "less",
                             "sass",
                             "scss",
-                            "less",
                             "svelte",
+                            "pug",
+                            "typescriptreact",
+                            "angular",
+                            "htmlangular",
                         },
                     })
                 end,

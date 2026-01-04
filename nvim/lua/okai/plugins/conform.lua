@@ -29,11 +29,6 @@ return {
                 htmlangular = { "prettier" },
                 c = { "clang-format" },
             },
-
-            -- format_on_save = {
-            --     lsp_fallback = true,
-            --     timeout_ms = 500,
-            -- },
         })
 
         conform.formatters["black"] = {
@@ -64,7 +59,7 @@ return {
             conform.format({
                 lsp_fallback = true,
                 async = true,
-                timeout_ms = 1000,
+                timeout_ms = 5000,
             })
         end, { desc = "Format file or range (in visual mode)" })
     end,

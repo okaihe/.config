@@ -58,7 +58,7 @@ return {
             return run_cmd, server_cmd
         end
 
-        -- RUNNER (Scripts)
+        -- RUNNER
         local runner_term = nil
         local last_run_cmd = nil
 
@@ -89,12 +89,15 @@ return {
                 })
                 runner_term:toggle()
             else
-                vim.ui.input({ prompt = "Runner Command: ", default = last_run_cmd or default_run }, function(input)
-                    if input then
-                        last_run_cmd = input
-                        smart_runner(false)
+                vim.ui.input(
+                    { prompt = "Runner Command: ", default = last_run_cmd or default_run },
+                    function(input)
+                        if input then
+                            last_run_cmd = input
+                            smart_runner(false)
+                        end
                     end
-                end)
+                )
             end
         end
 
@@ -126,54 +129,39 @@ return {
                 return
             end
 
-            vim.ui.input({ prompt = "Server Command: ", default = last_server_cmd or default_server }, function(input)
-                if input then
-                    last_server_cmd = input
+            vim.ui.input(
+                { prompt = "Server Command: ", default = last_server_cmd or default_server },
+                function(input)
+                    if input then
+                        last_server_cmd = input
 
-                    if server_term then
-                        server_term:shutdown()
+                        if server_term then
+                            server_term:shutdown()
+                        end
+
+                        server_term = Terminal:new({
+                            cmd = input,
+                            direction = "horizontal",
+                            hidden = true,
+                            auto_scroll = false,
+                            on_open = function(term)
+                                vim.cmd("stopinsert")
+                                vim.cmd("normal! gg")
+
+                                vim.api.nvim_buf_set_keymap(
+                                    term.bufnr,
+                                    "n",
+                                    "q",
+                                    "<cmd>close<CR>",
+                                    { noremap = true, silent = true }
+                                )
+                            end,
+                        })
+                        server_term:toggle()
                     end
-
-                    server_term = Terminal:new({
-                        cmd = input,
-                        direction = "horizontal",
-                        hidden = true,
-                        auto_scroll = false,
-                        on_open = function(term)
-                            vim.cmd("stopinsert")
-                            vim.cmd("normal! gg")
-
-                            vim.api.nvim_buf_set_keymap(
-                                term.bufnr,
-                                "n",
-                                "q",
-                                "<cmd>close<CR>",
-                                { noremap = true, silent = true }
-                            )
-                        end,
-                    })
-                    server_term:toggle()
                 end
-            end)
+            )
         end
-
-        -- LAZYGIT
-        local lazygit = Terminal:new({
-            cmd = "lazygit",
-            dir = "git_dir",
-            direction = "float",
-            float_opts = { border = "double" },
-            on_open = function(term)
-                vim.cmd("startinsert!")
-                local opts = { buffer = term.bufnr }
-                vim.keymap.del("t", "<esc>", opts)
-                vim.keymap.del("t", "<C-h>", opts)
-                vim.keymap.del("t", "<C-j>", opts)
-                vim.keymap.del("t", "<C-k>", opts)
-                vim.keymap.del("t", "<C-l>", opts)
-            end,
-            close_on_exit = true,
-        })
 
         -- KEYMAPS
         local k = vim.keymap.set
@@ -194,11 +182,6 @@ return {
         k("n", "<leader>tS", function()
             smart_server(true)
         end, { desc = "Server: Config/Restart" })
-
-        -- Git
-        k("n", "<leader>gg", function()
-            lazygit:toggle()
-        end, { desc = "Git: LazyGit" })
 
         -- Global
         k("n", "<leader>tt", "<cmd>1ToggleTerm direction=float<cr>", { desc = "Terminal: Float" })

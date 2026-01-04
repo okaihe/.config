@@ -1,6 +1,4 @@
 font-size = 13
-# font-thicken = true
-# font-family = "JetBrainsMono Nerd Font Mono"
 font-family = "BlexMono Nerd Font"
 adjust-cell-height = 10
 
@@ -14,7 +12,7 @@ window-padding-balance = true
 macos-titlebar-style = hidden
 macos-option-as-alt = right
 
-theme = "Jellybeans"
+theme = Gruvbox Dark Hard
 bold-is-bright = true
 
 copy-on-select = true

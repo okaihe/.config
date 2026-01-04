@@ -1,3 +1,3 @@
-### .Conf
+### .config
 
-Configuration for different applications.
+Configuration files for different applications.
