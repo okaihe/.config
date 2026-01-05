@@ -12,7 +12,6 @@ return {
         local mason_lspconfig = require("mason-lspconfig")
         local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
-        -- 1. DIAGNOSTIK CONFIG (Icons etc.)
         vim.diagnostic.config({
             signs = {
                 text = {
@@ -24,18 +23,11 @@ return {
             },
         })
 
-        -- 2. ZENTRALE KEYMAP DEFINITION (Der Fix!)
-        -- Dieser Block wird JEDES MAL ausgeführt, wenn sich IRGENDEIN LSP verbindet.
         vim.api.nvim_create_autocmd("LspAttach", {
             group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
             callback = function(ev)
-                -- Hilfsfunktion für Buffer-lokale Mappings
                 local opts = { buffer = ev.buf, silent = true }
                 local keymap = vim.keymap
-
-                -- Debugging: Falls du unsicher bist, ob das hier läuft,
-                -- entkommentiere die nächste Zeile und schau ob beim Öffnen "LSP Connected" erscheint.
-                -- print("LSP Connected to buffer " .. ev.buf)
 
                 opts.desc = "Go to definition"
                 keymap.set("n", "gd", vim.lsp.buf.definition, opts)
@@ -58,7 +50,6 @@ return {
                 opts.desc = "Show diagnostics"
                 keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
 
-                -- Navigation durch Fehler
                 keymap.set("n", "[d", function()
                     vim.diagnostic.jump({ count = -1, float = true })
                 end, opts)
@@ -68,10 +59,7 @@ return {
             end,
         })
 
-        -- 3. CAPABILITIES
         local capabilities = cmp_nvim_lsp.default_capabilities()
-
-        -- SICHERHEITS-CHECK: Wir erstellen die Tabellenstruktur, falls sie fehlt
         if not capabilities.textDocument then
             capabilities.textDocument = {}
         end
@@ -79,10 +67,9 @@ return {
             capabilities.textDocument.publishDiagnostics = {}
         end
 
-        -- Jetzt können wir den Wert sicher setzen (hilft Pyright, ungenutzte Variablen grau zu markieren)
         capabilities.textDocument.publishDiagnostics.tagSupport = { valueSet = { 2 } }
 
-        -- 4. PYTHON PATH HELPER
+        -- PYTHON PATH HELPER
         local function get_python_path(workspace)
             if workspace then
                 local venv = workspace .. "/.venv/bin/python"
@@ -96,20 +83,33 @@ return {
             return vim.fn.exepath("python3") or "python"
         end
 
-        -- 5. SERVER SETUP
+        -- SERVER SETUP
         mason_lspconfig.setup({
-            ensure_installed = { "pyright", "html", "lua_ls" }, -- deine Liste hier
+            ensure_installed = {
+                "angularls",
+                "html",
+                "pyright",
+                "dockerls",
+                "ts_ls",
+                "gopls",
+                "cssls",
+                "yamlls",
+                "jdtls",
+                "rust_analyzer",
+                "lua_ls",
+                "texlab",
+                "gitlab_ci_ls",
+                "phpactor",
+                "emmet_language_server",
+                "taplo",
+            },
             handlers = {
-                -- Standard Handler für alle Server
                 function(server_name)
                     lspconfig[server_name].setup({
                         capabilities = capabilities,
-                        -- WICHTIG: Hier KEIN 'on_attach' mehr übergeben!
-                        -- Das macht jetzt der Autocommand oben automatisch.
                     })
                 end,
 
-                -- Spezifischer Handler für Pyright
                 ["pyright"] = function()
                     lspconfig["pyright"].setup({
                         capabilities = capabilities,
@@ -128,7 +128,6 @@ return {
                     })
                 end,
 
-                -- Lua LS Config (gekürzt)
                 ["lua_ls"] = function()
                     lspconfig["lua_ls"].setup({
                         capabilities = capabilities,
