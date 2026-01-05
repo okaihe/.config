@@ -1,6 +1,5 @@
 return {
     "nvim-telescope/telescope.nvim",
-    branch = "0.1.x",
     dependencies = {
         "nvim-lua/plenary.nvim",
         { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -53,7 +52,6 @@ return {
                     prompt_title = "History",
                 },
                 lsp_references = {
-                    theme = "dropdown",
                     initial_mode = "normal",
                 },
             },
