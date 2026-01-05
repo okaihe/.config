@@ -13,6 +13,7 @@ return {
         local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
         vim.diagnostic.config({
+            virtual_text = true,
             signs = {
                 text = {
                     [vim.diagnostic.severity.ERROR] = "✘",
@@ -28,6 +29,51 @@ return {
             callback = function(ev)
                 local opts = { buffer = ev.buf, silent = true }
                 local keymap = vim.keymap
+
+                vim.keymap.set("n", "<leader>k", function()
+                    vim.diagnostic.config({
+                        virtual_lines = { current_line = true },
+                        virtual_text = false,
+                        signs = {
+                            text = {
+                                [vim.diagnostic.severity.ERROR] = "✘",
+                                [vim.diagnostic.severity.WARN] = "▲",
+                                [vim.diagnostic.severity.INFO] = "»",
+                                [vim.diagnostic.severity.HINT] = "⚑",
+                            },
+                        },
+                    })
+                    vim.api.nvim_create_autocmd("CursorMoved", {
+                        group = vim.api.nvim_create_augroup("line-diagnostics", { clear = true }),
+                        callback = function()
+                            vim.diagnostic.config({ virtual_lines = false, virtual_text = true })
+                            return true
+                        end,
+                    })
+                end)
+
+                opts.desc = "Copy diagnostics to clipboard"
+                keymap.set("n", "<leader>y", function()
+                    local line = vim.fn.line(".") - 1
+                    local diagnostics = vim.diagnostic.get(0, { lnum = line })
+
+                    if #diagnostics == 0 then
+                        print("Keine Fehler in dieser Zeile gefunden.")
+                        return
+                    end
+
+                    local error_messages = {}
+                    for _, diag in ipairs(diagnostics) do
+                        -- Format: [Source] Fehlertext (Code)
+                        local source = diag.source or "LSP"
+                        local msg = string.format("[%s] %s", source, diag.message)
+                        table.insert(error_messages, msg)
+                    end
+
+                    local text_to_copy = table.concat(error_messages, "\n")
+                    vim.fn.setreg("+", text_to_copy) -- "+" ist die System-Zwischenablage
+                    print("Diagnose kopiert!")
+                end, opts)
 
                 opts.desc = "Go to definition"
                 keymap.set("n", "gd", vim.lsp.buf.definition, opts)
@@ -134,6 +180,51 @@ return {
                         settings = {
                             Lua = {
                                 diagnostics = { disable = { "missing-fields" } },
+                            },
+                        },
+                    })
+                end,
+
+                ["yamlls"] = function()
+                    lspconfig["yamlls"].setup({
+                        capabilities = capabilities,
+                        settings = {
+                            yaml = {
+                                format = { enable = true },
+                                validate = true,
+                                completion = true,
+                                schemaStore = {
+                                    enable = false,
+                                    url = "",
+                                },
+                                schemas = {
+                                    ["https://raw.githubusercontent.com/awslabs/goformation/master/schema/cloudformation.schema.json"] = {
+                                        "*.yaml",
+                                        "*.yml",
+                                        "*.template",
+                                        "/*.yaml",
+                                        "/*.yml",
+                                    },
+                                },
+                                customTags = {
+                                    "!And",
+                                    "!Base64",
+                                    "!Cidr",
+                                    "!Equals",
+                                    "!FindInMap",
+                                    "!GetAtt",
+                                    "!GetAZs",
+                                    "!If",
+                                    "!ImportValue",
+                                    "!Join",
+                                    "!Not",
+                                    "!Or",
+                                    "!Ref",
+                                    "!Select",
+                                    "!Split",
+                                    "!Sub",
+                                    "!fn",
+                                },
                             },
                         },
                     })
