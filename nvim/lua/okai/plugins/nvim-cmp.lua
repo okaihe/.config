@@ -11,6 +11,8 @@ return {
     config = function()
         local cmp = require("cmp")
         local luasnip = require("luasnip")
+        vim.g.cmp_auto = true
+
         cmp.setup({
             snippet = {
                 expand = function(args)
@@ -18,6 +20,7 @@ return {
                 end,
             },
             completion = {
+                autocomplete = vim.g.cmp_auto and { cmp.TriggerEvent.TextChanged } or false,
                 completeopt = "menu,menuone,preview,noselect",
             },
             window = {
@@ -55,12 +58,30 @@ return {
             formatting = {
                 format = function(entry, vim_item)
                     local icons = {
-                        Text = "", Method = "󰆧", Function = "󰊕", Constructor = "",
-                        Field = "󰇽", Variable = "󰂡", Class = "󰠱", Interface = "",
-                        Module = "", Property = "󰜢", Unit = "", Value = "󰎠",
-                        Enum = "", Keyword = "󰌋", Snippet = "", Color = "󰏘",
-                        File = "󰈙", Reference = "", Folder = "󰉋", EnumMember = "",
-                        Constant = "󰏿", Struct = "", Event = "", Operator = "󰆕",
+                        Text = "",
+                        Method = "󰆧",
+                        Function = "󰊕",
+                        Constructor = "",
+                        Field = "󰇽",
+                        Variable = "󰂡",
+                        Class = "󰠱",
+                        Interface = "",
+                        Module = "",
+                        Property = "󰜢",
+                        Unit = "",
+                        Value = "󰎠",
+                        Enum = "",
+                        Keyword = "󰌋",
+                        Snippet = "",
+                        Color = "󰏘",
+                        File = "󰈙",
+                        Reference = "",
+                        Folder = "󰉋",
+                        EnumMember = "",
+                        Constant = "󰏿",
+                        Struct = "",
+                        Event = "",
+                        Operator = "󰆕",
                         TypeParameter = "󰅲",
                     }
                     vim_item.kind = string.format("%s %s", icons[vim_item.kind] or "", vim_item.kind)
@@ -73,5 +94,16 @@ return {
                 end,
             },
         })
+        vim.keymap.set("n", "<leader>tc", function()
+            vim.g.cmp_auto = not vim.g.cmp_auto
+            cmp.setup({
+                completion = {
+                    autocomplete = vim.g.cmp_auto and { cmp.TriggerEvent.TextChanged } or false,
+                },
+            })
+
+            local status = vim.g.cmp_auto and "Auto" or "Manual"
+            print("CMP Modus: " .. status)
+        end, { desc = "Toggle CMP Auto/Manual" })
     end,
 }

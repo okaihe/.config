@@ -44,10 +44,22 @@ return {
                 },
                 lualine_x = {
                     {
+                        function()
+                            return vim.g.cmp_auto and "󰚩 AUTO" or "󰄛 MANU"
+                        end,
+                        color = function()
+                            return { fg = vim.g.cmp_auto and "#9ece6a" or "#f7768e" }
+                        end,
+                        cond = function()
+                            return vim.g.cmp_auto ~= nil
+                        end,
+                    },
+                    {
                         lazy_status.updates,
                         cond = lazy_status.has_updates,
                         color = { fg = "#ff9e64" },
                     },
+                    { "encoding" },
                     { "encoding" },
                     {
                         "fileformat",
