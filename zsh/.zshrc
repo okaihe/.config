@@ -1,3 +1,5 @@
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # ----- PATHS
 export PATH="$PATH:/Users/kaiherbst/tools/flutter/bin" # Flutter
 export PATH="$PATH:$HOME/.pub-cache/bin" # Dart/Pub
