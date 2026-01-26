@@ -25,6 +25,24 @@ return {
         telescope.setup({
             defaults = {
                 path_display = { "filename_first" },
+                vimgrep_arguments = {
+                    "rg",
+                    "--color=never",
+                    "--no-heading",
+                    "--with-filename",
+                    "--line-number",
+                    "--column",
+                    "--smart-case",
+                    "--glob=!*.aux",
+                    "--glob=!*.bbl",
+                    "--glob=!*.blg",
+                    "--glob=!*.log",
+                    "--glob=!*.out",
+                    "--glob=!*.toc",
+                    "--glob=!*.synctex.gz",
+                    "--glob=!*.fdb_latexmk",
+                    "--glob=!*.fls",
+                },
                 file_ignore_patterns = {
                     ".git/",
                     "node_modules",
