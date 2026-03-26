@@ -8,8 +8,6 @@ return {
         "williamboman/mason-lspconfig.nvim",
     },
     config = function()
-        local lspconfig = require("lspconfig")
-        local mason_lspconfig = require("mason-lspconfig")
         local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
         vim.diagnostic.config({
@@ -30,7 +28,7 @@ return {
                 local opts = { buffer = ev.buf, silent = true }
                 local keymap = vim.keymap
 
-                vim.keymap.set("n", "<leader>k", function()
+                keymap.set("n", "<leader>k", function()
                     vim.diagnostic.config({
                         virtual_lines = { current_line = true },
                         virtual_text = false,
@@ -50,7 +48,7 @@ return {
                             return true
                         end,
                     })
-                end)
+                end, opts)
 
                 opts.desc = "Copy diagnostics to clipboard"
                 keymap.set("n", "<leader>y", function()
@@ -64,14 +62,13 @@ return {
 
                     local error_messages = {}
                     for _, diag in ipairs(diagnostics) do
-                        -- Format: [Source] Fehlertext (Code)
                         local source = diag.source or "LSP"
                         local msg = string.format("[%s] %s", source, diag.message)
                         table.insert(error_messages, msg)
                     end
 
                     local text_to_copy = table.concat(error_messages, "\n")
-                    vim.fn.setreg("+", text_to_copy) -- "+" ist die System-Zwischenablage
+                    vim.fn.setreg("+", text_to_copy)
                     print("Diagnose kopiert!")
                 end, opts)
 
@@ -105,6 +102,7 @@ return {
             end,
         })
 
+        -- CAPABILITIES (für nvim-cmp)
         local capabilities = cmp_nvim_lsp.default_capabilities()
         if not capabilities.textDocument then
             capabilities.textDocument = {}
@@ -112,7 +110,6 @@ return {
         if not capabilities.textDocument.publishDiagnostics then
             capabilities.textDocument.publishDiagnostics = {}
         end
-
         capabilities.textDocument.publishDiagnostics.tagSupport = { valueSet = { 2 } }
 
         -- PYTHON PATH HELPER
@@ -129,8 +126,104 @@ return {
             return vim.fn.exepath("python3") or "python"
         end
 
-        -- SERVER SETUP
-        mason_lspconfig.setup({
+        vim.lsp.config("*", {
+            capabilities = capabilities,
+        })
+
+        vim.lsp.config("pyright", {
+            settings = {
+                python = {
+                    analysis = {
+                        autoSearchPaths = true,
+                        useLibraryCodeForTypes = true,
+                        diagnosticMode = "openFilesOnly",
+                    },
+                    pythonPath = get_python_path(vim.fn.getcwd()),
+                },
+            },
+        })
+
+        vim.lsp.config("lua_ls", {
+            settings = {
+                Lua = {
+                    diagnostics = { disable = { "missing-fields" } },
+                },
+            },
+        })
+
+        vim.lsp.config("texlab", {
+            handlers = {
+                ["textDocument/publishDiagnostics"] = function(_, result, ctx, config)
+                    if result.diagnostics then
+                        result.diagnostics = vim.tbl_filter(function(diagnostic)
+                            return not string.match(diagnostic.message, "Underfull")
+                        end, result.diagnostics)
+                    end
+                    vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+                end,
+            },
+        })
+
+        vim.lsp.config("yamlls", {
+            settings = {
+                yaml = {
+                    format = { enable = true },
+                    validate = true,
+                    completion = true,
+                    schemaStore = {
+                        enable = true,
+                        url = "https://www.schemastore.org/api/json/catalog.json",
+                    },
+                    customTags = {
+                        "!And sequence",
+                        "!And mapping",
+                        "!Base64 scalar",
+                        "!Base64 mapping",
+                        "!Cidr sequence",
+                        "!Equals sequence",
+                        "!FindInMap sequence",
+                        "!GetAtt scalar",
+                        "!GetAtt sequence",
+                        "!GetAZs scalar",
+                        "!GetAZs sequence",
+                        "!If sequence",
+                        "!ImportValue scalar",
+                        "!ImportValue mapping",
+                        "!Join sequence",
+                        "!Not sequence",
+                        "!Or sequence",
+                        "!Ref scalar",
+                        "!Select sequence",
+                        "!Split sequence",
+                        "!Sub scalar",
+                        "!Sub sequence",
+                        "!fn scalar",
+                        "!Condition scalar",
+                    },
+                },
+            },
+        })
+
+        vim.lsp.enable({
+            "angularls",
+            "html",
+            "pyright",
+            "dockerls",
+            "ts_ls",
+            "gopls",
+            "cssls",
+            "yamlls",
+            "jdtls",
+            "rust_analyzer",
+            "lua_ls",
+            "texlab",
+            "gitlab_ci_ls",
+            "phpactor",
+            "emmet_language_server",
+            "taplo",
+        })
+
+        require("mason-lspconfig").setup({
             ensure_installed = {
                 "angularls",
                 "html",
@@ -148,87 +241,6 @@ return {
                 "phpactor",
                 "emmet_language_server",
                 "taplo",
-            },
-            handlers = {
-                function(server_name)
-                    lspconfig[server_name].setup({
-                        capabilities = capabilities,
-                    })
-                end,
-
-                ["pyright"] = function()
-                    lspconfig["pyright"].setup({
-                        capabilities = capabilities,
-                        settings = {
-                            python = {
-                                analysis = {
-                                    autoSearchPaths = true,
-                                    useLibraryCodeForTypes = true,
-                                    diagnosticMode = "openFilesOnly",
-                                },
-                            },
-                        },
-                        on_new_config = function(new_config, new_root_dir)
-                            new_config.settings.python.pythonPath = get_python_path(new_root_dir)
-                        end,
-                    })
-                end,
-
-                ["lua_ls"] = function()
-                    lspconfig["lua_ls"].setup({
-                        capabilities = capabilities,
-                        settings = {
-                            Lua = {
-                                diagnostics = { disable = { "missing-fields" } },
-                            },
-                        },
-                    })
-                end,
-
-                ["yamlls"] = function()
-                    lspconfig["yamlls"].setup({
-                        capabilities = capabilities,
-                        settings = {
-                            yaml = {
-                                format = { enable = true },
-                                validate = true,
-                                completion = true,
-                                schemaStore = {
-                                    enable = false,
-                                    url = "",
-                                },
-                                schemas = {
-                                    ["https://raw.githubusercontent.com/awslabs/goformation/master/schema/cloudformation.schema.json"] = {
-                                        "*.yaml",
-                                        "*.yml",
-                                        "*.template",
-                                        "/*.yaml",
-                                        "/*.yml",
-                                    },
-                                },
-                                customTags = {
-                                    "!And",
-                                    "!Base64",
-                                    "!Cidr",
-                                    "!Equals",
-                                    "!FindInMap",
-                                    "!GetAtt",
-                                    "!GetAZs",
-                                    "!If",
-                                    "!ImportValue",
-                                    "!Join",
-                                    "!Not",
-                                    "!Or",
-                                    "!Ref",
-                                    "!Select",
-                                    "!Split",
-                                    "!Sub",
-                                    "!fn",
-                                },
-                            },
-                        },
-                    })
-                end,
             },
         })
     end,
