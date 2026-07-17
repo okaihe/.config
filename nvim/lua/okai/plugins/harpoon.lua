@@ -1,43 +1,37 @@
 return {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-        local harpoon = require("harpoon")
-        harpoon:setup()
+  "ThePrimeagen/harpoon",
+  branch = "harpoon2",
+  dependencies = { "nvim-lua/plenary.nvim" },
+  config = function()
+    local harpoon = require("harpoon")
 
-        local keymap = vim.keymap.set
+    harpoon:setup({
+      settings = {
+        save_on_toggle = true,
+        sync_on_ui_close = true,
+      },
+      menu = {
+        width = vim.api.nvim_win_get_width(0) - 40,
+      },
+    })
 
-        -- 1. Mark file (Add)
-        keymap("n", "<leader>a", function()
-            harpoon:list():add()
-        end, { desc = "Harpoon: Datei pinnen" })
+    local map = vim.keymap.set
+    local opts = { silent = true }
 
-        -- 2. Open menu (Quick Menu)
-        keymap("n", "<leader>h", function()
-            harpoon.ui:toggle_quick_menu(harpoon:list())
-        end, { desc = "Harpoon: Menü öffnen" })
+    map("n", "<leader>ha", function()
+      harpoon:list():add()
+    end, vim.tbl_extend("force", opts, { desc = "Harpoon: Datei hinzufügen" }))
 
-        -- 3. Navigate (Jump to files)
-        keymap("n", "<leader>1", function()
-            harpoon:list():select(1)
-        end, { desc = "Harpoon: Gehe zu 1" })
-        keymap("n", "<leader>2", function()
-            harpoon:list():select(2)
-        end, { desc = "Harpoon: Gehe zu 2" })
-        keymap("n", "<leader>3", function()
-            harpoon:list():select(3)
-        end, { desc = "Harpoon: Gehe zu 3" })
-        keymap("n", "<leader>4", function()
-            harpoon:list():select(4)
-        end, { desc = "Harpoon: Gehe zu 4" })
+    map("n", "<leader>he", function()
+      harpoon.ui:toggle_quick_menu(harpoon:list(), { border = "none" })
+    end, vim.tbl_extend("force", opts, { desc = "Harpoon: Menü öffnen" }))
 
-        -- Jump like buffer circle
-        keymap("n", "<leader>hp", function()
-            harpoon:list():prev()
-        end, { desc = "Harpoon: Vorherige" })
-        keymap("n", "<leader>hn", function()
-            harpoon:list():next()
-        end, { desc = "Harpoon: Nächste" })
-    end,
+    map("n", "<leader>h1", function() harpoon:list():select(1) end, vim.tbl_extend("force", opts, { desc = "Harpoon: Slot 1" }))
+    map("n", "<leader>h2", function() harpoon:list():select(2) end, vim.tbl_extend("force", opts, { desc = "Harpoon: Slot 2" }))
+    map("n", "<leader>h3", function() harpoon:list():select(3) end, vim.tbl_extend("force", opts, { desc = "Harpoon: Slot 3" }))
+    map("n", "<leader>h4", function() harpoon:list():select(4) end, vim.tbl_extend("force", opts, { desc = "Harpoon: Slot 4" }))
+
+    map("n", "<leader>hn", function() harpoon:list():next() end, vim.tbl_extend("force", opts, { desc = "Harpoon: Nächste Datei" }))
+    map("n", "<leader>hp", function() harpoon:list():prev() end, vim.tbl_extend("force", opts, { desc = "Harpoon: Vorherige Datei" }))
+  end,
 }

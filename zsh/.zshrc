@@ -29,6 +29,7 @@ if command -v zoxide &> /dev/null; then
     eval "$(zoxide init zsh)"
 fi
 
+
 # ----- ALIASES
 alias svenv="source venv/bin/activate"
 alias ls="ls -G"
